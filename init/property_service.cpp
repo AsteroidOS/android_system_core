@@ -262,8 +262,10 @@ int property_set(const char* name, const char* value) {
 static void handle_property_set_fd()
 {
     prop_msg msg;
+    int n;
     int s;
     int r;
+    int ret;
     struct ucred cr;
     struct sockaddr_un addr;
     socklen_t addr_size = sizeof(addr);
@@ -272,6 +274,8 @@ static void handle_property_set_fd()
     struct pollfd ufds[1];
     const int timeout_ms = 2 * 1000;  /* Default 2 sec timeout for caller to send property. */
     int nr;
+    char rproperty[PROP_VALUE_MAX];
+    const prop_info *pi;
 
     if ((s = accept(property_set_fd, (struct sockaddr *) &addr, &addr_size)) < 0) {
         return;
@@ -344,7 +348,30 @@ static void handle_property_set_fd()
         }
         freecon(source_ctx);
         break;
+        case PROP_MSG_GETPROP:
+            msg.name[PROP_NAME_MAX-1] = 0;
+            msg.value[0] = 0;
 
+            if ((bool)msg.name) {
+                /* If we have a value, copy it over, otherwise returns the default */
+                ret = property_get(msg.name, rproperty);
+                if (ret) {
+                    strlcpy(msg.value, rproperty, sizeof(msg.value));
+                }
+            }
+ 
+            /* Send the property value back */
+            r = TEMP_FAILURE_RETRY(send(s, &msg, sizeof(msg), 0));
+            close(s);
+            break;
+        case PROP_MSG_LISTPROP:
+            for(n = 0; (pi = __system_property_find_nth(n)); n++) {
+                msg.name[0] = msg.value[0] = 0;
+                __system_property_read(pi, msg.name, msg.value);
+                TEMP_FAILURE_RETRY(send(s, &msg, sizeof(msg), 0));
+            }
+        close(s);
+        break;
     default:
         close(s);
         break;
