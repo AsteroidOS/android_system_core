@@ -720,7 +720,7 @@ static void handle_generic_device_event(struct uevent *uevent)
      } else if(!strncmp(uevent->subsystem, "misc", 4) &&
                  !strncmp(name, "log_", 4)) {
          INFO("kernel logger is deprecated\n");
-         base = "/dev/log/";
+         base = "/dev/alog/";
          make_dir(base, 0755);
          name += 4;
      } else
