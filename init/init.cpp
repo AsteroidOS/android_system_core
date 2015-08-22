@@ -982,6 +982,7 @@ int main(int argc, char** argv) {
 
     add_environment("PATH", _PATH_DEFPATH);
 
+    /* In a hybris system the fs is managed for us
     // Get the basic filesystem setup we need put together in the initramdisk
     // on / and then we'll let the rc file figure out the rest.
     mkdir("/dev", 0755);
@@ -994,6 +995,8 @@ int main(int argc, char** argv) {
     mount("devpts", "/dev/pts", "devpts", 0, NULL);
     mount("proc", "/proc", "proc", 0, NULL);
     mount("sysfs", "/sys", "sysfs", 0, NULL);
+    */
+    mkdir("/dev/socket", 0755);
 
     // Indicate that booting is in progress to background fw loaders, etc.
     close(open("/dev/.booting", O_WRONLY | O_CREAT | O_CLOEXEC, 0000));
@@ -1053,7 +1056,7 @@ int main(int argc, char** argv) {
     // Don't mount filesystems or start core system services in charger mode.
     char bootmode[PROP_VALUE_MAX];
     if (property_get("ro.bootmode", bootmode) > 0 && strcmp(bootmode, "charger") == 0) {
-        action_for_each_trigger("charger", action_add_queue_tail);
+//        action_for_each_trigger("charger", action_add_queue_tail);
     } else {
         action_for_each_trigger("late-init", action_add_queue_tail);
     }
