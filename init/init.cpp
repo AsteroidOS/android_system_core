@@ -1002,16 +1002,20 @@ int main(int argc, char** argv) {
 
     bool is_first_stage = (argc == 1) || (strcmp(argv[1], "--second-stage") != 0);
 
+    /* In a hybris system the fs is managed for us
     // Get the basic filesystem setup we need put together in the initramdisk
     // on / and then we'll let the rc file figure out the rest.
-    if (is_first_stage) {
-        mount("tmpfs", "/dev", "tmpfs", MS_NOSUID, "mode=0755");
-        mkdir("/dev/pts", 0755);
-        mkdir("/dev/socket", 0755);
-        mount("devpts", "/dev/pts", "devpts", 0, NULL);
-        mount("proc", "/proc", "proc", 0, NULL);
-        mount("sysfs", "/sys", "sysfs", 0, NULL);
-    }
+    mkdir("/dev", 0755);
+    mkdir("/proc", 0755);
+    mkdir("/sys", 0755);
+    mount("tmpfs", "/dev", "tmpfs", MS_NOSUID, "mode=0755");
+    mkdir("/dev/pts", 0755);
+    mkdir("/dev/socket", 0755);
+    mount("devpts", "/dev/pts", "devpts", 0, NULL);
+    mount("proc", "/proc", "proc", 0, NULL);
+    mount("sysfs", "/sys", "sysfs", 0, NULL);
+    */
+    mkdir("/dev/socket", 0755);
 
     // We must have some place other than / to create the device nodes for
     // kmsg and null, otherwise we won't be able to remount / read-only
@@ -1098,7 +1102,7 @@ int main(int argc, char** argv) {
     // Don't mount filesystems or start core system services in charger mode.
     char bootmode[PROP_VALUE_MAX];
     if (property_get("ro.bootmode", bootmode) > 0 && strcmp(bootmode, "charger") == 0) {
-        action_for_each_trigger("charger", action_add_queue_tail);
+//        action_for_each_trigger("charger", action_add_queue_tail);
     } else {
         action_for_each_trigger("late-init", action_add_queue_tail);
     }
