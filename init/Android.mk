@@ -61,11 +61,11 @@ LOCAL_STATIC_LIBRARIES := \
     liblogwrap \
     libcutils \
     libbase \
+	libselinux \
     libext4_utils_static \
     libutils \
     liblog \
     libc \
-    libselinux \
     libmincrypt \
     libc++_static \
     libdl
