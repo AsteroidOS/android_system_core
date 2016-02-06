@@ -3,6 +3,7 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE:= logd
+LOCAL_FORCE_STATIC_EXECUTABLE := true
 
 LOCAL_SRC_FILES := \
     main.cpp \
@@ -20,11 +21,13 @@ LOCAL_SRC_FILES := \
     LogAudit.cpp \
     event.logtags
 
-LOCAL_SHARED_LIBRARIES := \
+LOCAL_STATIC_LIBRARIES := \
     libsysutils \
     liblog \
     libcutils \
-    libutils
+    libutils \
+	libc \
+	libm
 
 # This is what we want to do:
 #  event_logtags = $(shell \

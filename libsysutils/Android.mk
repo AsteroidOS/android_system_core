@@ -23,3 +23,21 @@ LOCAL_SHARED_LIBRARIES := \
 
 include $(BUILD_SHARED_LIBRARY)
 
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES:=                             \
+                  src/SocketListener.cpp      \
+                  src/FrameworkListener.cpp   \
+                  src/NetlinkListener.cpp     \
+                  src/NetlinkEvent.cpp        \
+                  src/FrameworkCommand.cpp    \
+                  src/SocketClient.cpp        \
+                  src/ServiceManager.cpp      \
+                  EventLogTags.logtags
+LOCAL_MODULE:= libsysutils
+LOCAL_CFLAGS := -Werror
+LOCAL_STATIC_LIBRARIES := \
+        libcutils \
+        liblog \
+        libnl
+include $(BUILD_STATIC_LIBRARY)
+
