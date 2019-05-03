@@ -25,7 +25,7 @@
 
 void InitKernelLogging(char* argv[]) {
     // Make stdin/stdout/stderr all point to /dev/null.
-    int fd = open("/sys/fs/selinux/null", O_RDWR);
+/*    int fd = open("/sys/fs/selinux/null", O_RDWR);
     if (fd == -1) {
         int saved_errno = errno;
         android::base::InitLogging(argv, &android::base::KernelLogger);
@@ -35,7 +35,7 @@ void InitKernelLogging(char* argv[]) {
     dup2(fd, 0);
     dup2(fd, 1);
     dup2(fd, 2);
-    if (fd > 2) close(fd);
+    if (fd > 2) close(fd); */
 
     android::base::InitLogging(argv, &android::base::KernelLogger);
 }

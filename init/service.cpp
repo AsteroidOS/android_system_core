@@ -52,6 +52,7 @@ using android::base::ParseInt;
 using android::base::StringPrintf;
 using android::base::WriteStringToFile;
 
+/*
 static std::string ComputeContextFromExecutable(std::string& service_name,
                                                 const std::string& service_path) {
     std::string computed_context;
@@ -87,7 +88,7 @@ static std::string ComputeContextFromExecutable(std::string& service_name,
         return "";
     }
     return computed_context;
-}
+} */
 
 static void SetUpPidNamespace(const std::string& service_name) {
     constexpr unsigned int kSafeFlags = MS_NODEV | MS_NOEXEC | MS_NOSUID;
@@ -251,11 +252,12 @@ void Service::SetProcessAttributes() {
             PLOG(FATAL) << "setuid failed for " << name_;
         }
     }
+    /*
     if (!seclabel_.empty()) {
         if (setexeccon(seclabel_.c_str()) < 0) {
             PLOG(FATAL) << "cannot setexeccon('" << seclabel_ << "') for " << name_;
         }
-    }
+    } */
     if (priority_ != 0) {
         if (setpriority(PRIO_PROCESS, 0, priority_) != 0) {
             PLOG(FATAL) << "setpriority failed for " << name_;
@@ -634,6 +636,7 @@ bool Service::Start() {
     }
 
     std::string scon;
+    /*
     if (!seclabel_.empty()) {
         scon = seclabel_;
     } else {
@@ -642,7 +645,7 @@ bool Service::Start() {
         if (scon == "") {
             return false;
         }
-    }
+    } */
 
     LOG(INFO) << "starting service '" << name_ << "'...";
 
