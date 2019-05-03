@@ -130,12 +130,14 @@ std::unique_ptr<FirstStageMount> FirstStageMount::Create() {
 
 bool FirstStageMount::DoFirstStageMount() {
     // Nothing to mount.
+#if DISABLED_FOR_HYBRIS_SUPPORT
+
     if (mount_fstab_recs_.empty()) return true;
 
     if (!InitDevices()) return false;
 
     if (!MountPartitions()) return false;
-
+#endif
     return true;
 }
 
