@@ -39,8 +39,6 @@
 #include <android-base/strings.h>
 #include <system/thread_defs.h>
 
-#include <processgroup/processgroup.h>
-
 #include "action.h"
 #include "init.h"
 #include "init_parser.h"
@@ -213,7 +211,11 @@ void Service::NotifyStateChange(const std::string& new_state) const {
 void Service::KillProcessGroup(int signal) {
     LOG(INFO) << "Sending signal " << signal
               << " to service '" << name_
-              << "' (pid " << pid_ << ") process group...";
+              << "' (pid " << pid_ << ") process group... HYBRIS: killing PID instead of process group.";
+    kill(pid_, signal);
+
+    // hybris: TODO?
+#if DISABLED_FOR_HYBRIS_SUPPORT
     int r;
     if (signal == SIGTERM) {
         r = killProcessGroupOnce(uid_, pid_, signal);
@@ -226,6 +228,7 @@ void Service::KillProcessGroup(int signal) {
     if (kill(-pid_, signal) == -1) {
         PLOG(ERROR) << "kill(" << pid_ << ", " << signal << ") failed";
     }
+#endif
 }
 
 void Service::SetProcessAttributes() {
@@ -746,11 +749,13 @@ bool Service::Start() {
     pid_ = pid;
     flags_ |= SVC_RUNNING;
 
+#if DISABLED_FOR_HYBRIS_SUPPORT
     errno = -createProcessGroup(uid_, pid_);
     if (errno != 0) {
         PLOG(ERROR) << "createProcessGroup(" << uid_ << ", " << pid_ << ") failed for service '"
                     << name_ << "'";
     }
+#endif
 
     if ((flags_ & SVC_EXEC) != 0) {
         LOG(INFO) << android::base::StringPrintf(
