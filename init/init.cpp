@@ -968,6 +968,7 @@ int main(int argc, char** argv) {
         // Clear the umask.
         umask(0);
 
+        /* In a hybris system the fs is managed for us
         // Get the basic filesystem setup we need put together in the initramdisk
         // on / and then we'll let the rc file figure out the rest.
         mount("tmpfs", "/dev", "tmpfs", MS_NOSUID, "mode=0755");
@@ -985,7 +986,8 @@ int main(int argc, char** argv) {
         mknod("/dev/kmsg", S_IFCHR | 0600, makedev(1, 11));
         mknod("/dev/random", S_IFCHR | 0666, makedev(1, 8));
         mknod("/dev/urandom", S_IFCHR | 0666, makedev(1, 9));
-
+        */
+        mkdir("/dev/socket", 0755);
         // Now that tmpfs is mounted on /dev and we have /dev/kmsg, we can actually
         // talk to the outside world...
         InitKernelLogging(argv);
@@ -1128,7 +1130,7 @@ int main(int argc, char** argv) {
     // Don't mount filesystems or start core system services in charger mode.
     std::string bootmode = GetProperty("ro.bootmode", "");
     if (bootmode == "charger") {
-        am.QueueEventTrigger("charger");
+//        am.QueueEventTrigger("charger");
     } else {
         am.QueueEventTrigger("late-init");
     }
